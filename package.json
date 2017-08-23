@@ -1,0 +1,31 @@
+{
+  "name": "quantified-self-express-api",
+  "version": "1.0.0",
+  "description": "quantified self api",
+  "main": "index.js",
+  "scripts": {
+    "test": "NODE_ENV=test mocha test/*-test.js",
+    "start": "nodemon server.js",
+    "debug": "NODE_ENV=test mocha debug test/*-test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/Benjaminpjacobs/quantified-self-express-api.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Benjaminpjacobs/quantified-self-express-api/issues"
+  },
+  "homepage": "https://github.com/Benjaminpjacobs/quantified-self-express-api#readme",
+  "dependencies": {
+    "express": "^4.15.4",
+    "knex": "^0.13.0",
+    "pg": "^7.2.0"
+  },
+  "devDependencies": {
+    "chai": "^4.1.1",
+    "mocha": "^3.5.0",
+    "nodemon": "^1.11.0"
+  }
+}
