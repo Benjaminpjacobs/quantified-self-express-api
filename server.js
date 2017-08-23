@@ -34,7 +34,6 @@ app.post('/api/v1/meals/:meal_id/foods/:food_id', MealsController.postFoodResour
 
 app.delete('/api/v1/meals/:meal_id/foods/:food_id', MealsController.deleteFoodResource)
 
-
 if (!module.parent) {
     app.listen(app.get('port'), function() {
         console.log(`${app.locals.title} is running on ${app.get('port')}.`);
