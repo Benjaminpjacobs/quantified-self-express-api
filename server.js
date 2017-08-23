@@ -7,8 +7,11 @@ const configuration = require('./knexfile')[environment];
 const database = require('knex')(configuration);
 const FoodsController = require('./lib/controllers/foods_controller.js')
 const MealsController = require('./lib/controllers/meals_controller.js')
+const WelcomeController = require('./lib/controllers/welcome_controller.js')
 
 app.set('port', process.env.PORT || 3000)
+
+app.get('/', WelcomeController.getIndex)
 
 app.get('/api/v1/foods', FoodsController.getAll)
 
