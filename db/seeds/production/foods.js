@@ -1,5 +1,5 @@
 exports.seed = function(knex, Promise) {
-    return knex.raw('SELECT * FROM foods')
+    return knex.raw('TRUNCATE foods RESTART IDENTITY')
         .then(function() {
             return Promise.all([
                 knex.raw(
