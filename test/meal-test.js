@@ -81,4 +81,59 @@ describe('Meals API', function() {
             });
         });
     })
+    describe('GET single meals', function() {
+        beforeEach(function(done) {
+            database.raw(
+                    'INSERT INTO meals (name, created_at) VALUES (?, ?)', ["Breakfast", new Date]
+                )
+                .then(function() { done() });
+        })
+
+        beforeEach(function(done) {
+            database.raw(
+                    'INSERT INTO foods (name, calories, meal_id, created_at) VALUES (?, ?, ?, ?)', ["Apple", 120, 1, new Date]
+                )
+                .then(function() {
+                    return database.raw(
+                        'INSERT INTO foods (name, calories, meal_id, created_at) VALUES (?, ?, ?, ?)', ["yogurt", 220, 1, new Date]
+                    )
+                })
+                .then(function() {
+                    return database.raw(
+                        'INSERT INTO foods (name, calories, meal_id, created_at) VALUES (?, ?, ?, ?)', ["granola", 420, 1, new Date]
+                    )
+                })
+                .then(function() { done() });
+        })
+
+        afterEach(function(done) {
+            database.raw('TRUNCATE TABLE meals RESTART IDENTITY CASCADE')
+                .then(function() {
+                    return database.raw('TRUNCATE TABLE foods RESTART IDENTITY')
+                })
+                .then(function() { done() });
+        })
+
+        it('should return json data of single meal', function(done) {
+            this.request.get('/meals/1', (error, response) => {
+                if (error) { done(error); }
+                let parsedFoods = JSON.parse(response.body)
+                assert.equal(response.statusCode, 200);
+                assert.equal(parsedFoods.length, 1);
+                assert.equal(parsedFoods[0].id, 1);
+                assert.equal(parsedFoods[0].name, 'Breakfast');
+                assert.isArray(parsedFoods[0].foods);
+                assert.isObject(parsedFoods[0].foods[0]);
+                done();
+            });
+        });
+        it('should return 404 if resource not found', function(done) {
+            this.request.get('meals/2', (error, response) => {
+                if (error) { done(error); }
+                assert.equal(response.statusCode, 404)
+                done();
+
+            })
+        })
+    })
 });

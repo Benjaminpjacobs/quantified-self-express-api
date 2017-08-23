@@ -25,7 +25,8 @@ app.delete('/api/v1/foods/:id', FoodsController.deleteResource)
 
 app.get('/api/v1/meals', MealsController.getAll)
 
-app.get('/api/v1/meals/:id', MealsController.getAll)
+app.get('/api/v1/meals/:id', MealsController.getResource)
+
 
 if (!module.parent) {
     app.listen(app.get('port'), function() {
