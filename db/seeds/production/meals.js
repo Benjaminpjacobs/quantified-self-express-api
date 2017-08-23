@@ -1,5 +1,5 @@
 exports.seed = function(knex, Promise) {
-    return knex.raw('TRUNCATE meals RESTART IDENTITY')
+    return knex.raw('SELECT * FROM meals')
         .then(function() {
             return knex.raw(
                 'INSERT INTO meals (name, created_at) VALUES (?, ?)', ["Breakfast", new Date]
