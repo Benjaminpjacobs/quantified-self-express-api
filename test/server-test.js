@@ -171,4 +171,33 @@ describe('Server', function() {
         });
 
     })
+
+    describe('Delete single food resource', function() {
+        beforeEach(function(done) {
+            database.raw(
+                'INSERT INTO foods (name, calories, created_at) VALUES (?, ?, ?)', ["Apple", 120, new Date]
+            ).then(function() { done() });
+        })
+
+        afterEach(function(done) {
+            database.raw('TRUNCATE foods RESTART IDENTITY')
+                .then(function() { done() });
+        })
+
+        it('should delete a single resource object', function(done) {
+            this.request.delete('/foods/1', (error, response) => {
+                if (error) { done(error); }
+                assert.equal(response.statusCode, 204)
+                done();
+            });
+        });
+
+        it('should not delete a non existant resource object', function(done) {
+            this.request.delete('/foods/2', (error, response) => {
+                if (error) { done(error); }
+                assert.equal(response.statusCode, 400)
+                done();
+            });
+        });
+    })
 });
