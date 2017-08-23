@@ -136,4 +136,55 @@ describe('Meals API', function() {
             })
         })
     })
+    describe('POST food to meal', function() {
+        beforeEach(function(done) {
+            database.raw(
+                    'INSERT INTO meals (name, created_at) VALUES (?, ?)', ["Breakfast", new Date]
+                )
+                .then(function() { done() });
+        })
+
+        beforeEach(function(done) {
+            database.raw(
+                    'INSERT INTO foods (name, calories, meal_id, created_at) VALUES (?, ?, ?, ?)', ["Apple", 120, 1, new Date]
+                )
+                .then(function() {
+                    return database.raw(
+                        'INSERT INTO foods (name, calories, meal_id, created_at) VALUES (?, ?, ?, ?)', ["yogurt", 220, 1, new Date]
+                    )
+                })
+                .then(function() {
+                    return database.raw(
+                        'INSERT INTO foods (name, calories, created_at) VALUES (?, ?, ?)', ["granola", 420, new Date]
+                    )
+                })
+                .then(function() { done() });
+        })
+
+        afterEach(function(done) {
+            database.raw('TRUNCATE TABLE meals RESTART IDENTITY CASCADE')
+                .then(function() {
+                    return database.raw('TRUNCATE TABLE foods RESTART IDENTITY')
+                })
+                .then(function() { done() });
+        })
+
+        it('should return json data of single meal', function(done) {
+            this.request.post('/meals/1/foods/3', (error, response) => {
+                if (error) { done(error); }
+                let parsedFoods = JSON.parse(response.body)
+                assert.equal(response.statusCode, 202);
+                done();
+            });
+        });
+
+        it('should return 404 if resource not found', function(done) {
+            this.request.get('meals/1/foods/4', (error, response) => {
+                if (error) { done(error); }
+                assert.equal(response.statusCode, 404)
+                done();
+
+            })
+        })
+    })
 });
