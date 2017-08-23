@@ -6,6 +6,7 @@ const environment = process.env.NODE_ENV || 'development'
 const configuration = require('./knexfile')[environment];
 const database = require('knex')(configuration);
 const FoodsController = require('./lib/controllers/foods_controller.js')
+const MealsController = require('./lib/controllers/meals_controller.js')
 
 app.set('port', process.env.PORT || 3000)
 
@@ -18,6 +19,8 @@ app.post('/api/v1/foods', FoodsController.postResource)
 app.put('/api/v1/foods/:id', FoodsController.updateResource)
 
 app.delete('/api/v1/foods/:id', FoodsController.deleteResource)
+
+app.get('/api/v1/meals', MealsController.getAll)
 
 if (!module.parent) {
     app.listen(app.get('port'), function() {
