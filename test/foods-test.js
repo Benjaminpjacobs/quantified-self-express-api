@@ -32,7 +32,7 @@ describe('Foods API', function() {
         })
 
         afterEach(function(done) {
-            database.raw('TRUNCATE foods RESTART IDENTITY')
+            database.raw('TRUNCATE foods RESTART IDENTITY CASCADE')
                 .then(function() { done() });
         })
 
@@ -65,7 +65,7 @@ describe('Foods API', function() {
         })
 
         afterEach(function(done) {
-            database.raw('TRUNCATE foods RESTART IDENTITY')
+            database.raw('TRUNCATE foods RESTART IDENTITY CASCADE')
                 .then(function() { done() });
         })
 
@@ -92,7 +92,7 @@ describe('Foods API', function() {
     describe('POST single food resource', function() {
 
         afterEach(function(done) {
-            database.raw('TRUNCATE foods RESTART IDENTITY')
+            database.raw('TRUNCATE foods RESTART IDENTITY CASCADE')
                 .then(function() { done() });
         })
 
@@ -143,7 +143,7 @@ describe('Foods API', function() {
         })
 
         afterEach(function(done) {
-            database.raw('TRUNCATE foods RESTART IDENTITY')
+            database.raw('TRUNCATE foods RESTART IDENTITY CASCADE')
                 .then(function() { done() });
         })
 
@@ -176,7 +176,7 @@ describe('Foods API', function() {
         })
 
         afterEach(function(done) {
-            database.raw('TRUNCATE foods RESTART IDENTITY')
+            database.raw('TRUNCATE foods RESTART IDENTITY CASCADE')
                 .then(function() { done() });
         })
 

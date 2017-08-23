@@ -38,20 +38,34 @@ describe('Meals API', function() {
 
         beforeEach(function(done) {
             database.raw(
-                    'INSERT INTO foods (name, calories, meal_id, created_at) VALUES (?, ?, ?, ?)', ["Apple", 120, 1, new Date]
+                    'INSERT INTO foods (name, calories, created_at) VALUES (?, ?, ?)', ["Apple", 120, new Date]
                 )
                 .then(function() {
                     return database.raw(
-                        'INSERT INTO foods (name, calories, meal_id, created_at) VALUES (?, ?, ?, ?)', ["Sandwich", 420, 2, new Date]
+                        'INSERT INTO foods (name, calories, created_at) VALUES (?, ?, ?)', ["Sandwich", 420, new Date]
+                    )
+                })
+                .then(function() { done() });
+        })
+        beforeEach(function(done) {
+            database.raw(
+                    'INSERT INTO meals_foods (meal_id, food_id, created_at) VALUES (?, ?, ?)', [1, 1, new Date]
+                )
+                .then(function() {
+                    return database.raw(
+                        'INSERT INTO meals_foods (meal_id, food_id, created_at) VALUES (?, ?, ?)', [2, 2, new Date]
                     )
                 })
                 .then(function() { done() });
         })
 
         afterEach(function(done) {
-            database.raw('TRUNCATE TABLE meals RESTART IDENTITY CASCADE')
+            database.raw('TRUNCATE TABLE meals_foods RESTART IDENTITY CASCADE')
                 .then(function() {
-                    return database.raw('TRUNCATE TABLE foods RESTART IDENTITY')
+                    return database.raw('TRUNCATE TABLE meals RESTART IDENTITY CASCADE')
+                })
+                .then(function() {
+                    return database.raw('TRUNCATE TABLE foods RESTART IDENTITY CASCADE')
                 })
                 .then(function() { done() });
         })
@@ -91,28 +105,47 @@ describe('Meals API', function() {
 
         beforeEach(function(done) {
             database.raw(
-                    'INSERT INTO foods (name, calories, meal_id, created_at) VALUES (?, ?, ?, ?)', ["Apple", 120, 1, new Date]
+                    'INSERT INTO foods (name, calories, created_at) VALUES (?, ?, ?)', ["Apple", 120, new Date]
                 )
                 .then(function() {
                     return database.raw(
-                        'INSERT INTO foods (name, calories, meal_id, created_at) VALUES (?, ?, ?, ?)', ["yogurt", 220, 1, new Date]
+                        'INSERT INTO foods (name, calories, created_at) VALUES (?, ?, ?)', ["yogurt", 220, new Date]
                     )
                 })
                 .then(function() {
                     return database.raw(
-                        'INSERT INTO foods (name, calories, meal_id, created_at) VALUES (?, ?, ?, ?)', ["granola", 420, 1, new Date]
+                        'INSERT INTO foods (name, calories, created_at) VALUES (?, ?, ?)', ["granola", 420, new Date]
                     )
+                })
+                .then(function() { done() });
+        })
+        beforeEach(function(done) {
+            database.raw(
+                    'INSERT INTO meals_foods (food_id, meal_id, created_at) VALUES (?, ?, ?)', [1, 1, new Date]
+                )
+                .then(function() {
+                    return database.raw(
+                        'INSERT INTO meals_foods (food_id, meal_id, created_at) VALUES (?, ?, ?)', [2, 1, new Date]
+                    )
+                })
+                .then(function() {
+                    return database.raw(
+                        'INSERT INTO meals_foods (food_id, meal_id, created_at) VALUES (?, ?, ?)', [3, 1, new Date])
                 })
                 .then(function() { done() });
         })
 
         afterEach(function(done) {
-            database.raw('TRUNCATE TABLE meals RESTART IDENTITY CASCADE')
+            database.raw('TRUNCATE TABLE meals_foods RESTART IDENTITY CASCADE')
                 .then(function() {
-                    return database.raw('TRUNCATE TABLE foods RESTART IDENTITY')
+                    return database.raw('TRUNCATE TABLE meals RESTART IDENTITY CASCADE')
+                })
+                .then(function() {
+                    return database.raw('TRUNCATE TABLE foods RESTART IDENTITY CASCADE')
                 })
                 .then(function() { done() });
         })
+
 
         it('should return json data of single meal', function(done) {
             this.request.get('/meals/1', (error, response) => {
@@ -146,11 +179,11 @@ describe('Meals API', function() {
 
         beforeEach(function(done) {
             database.raw(
-                    'INSERT INTO foods (name, calories, meal_id, created_at) VALUES (?, ?, ?, ?)', ["Apple", 120, 1, new Date]
+                    'INSERT INTO foods (name, calories, created_at) VALUES (?, ?, ?)', ["Apple", 120, new Date]
                 )
                 .then(function() {
                     return database.raw(
-                        'INSERT INTO foods (name, calories, meal_id, created_at) VALUES (?, ?, ?, ?)', ["yogurt", 220, 1, new Date]
+                        'INSERT INTO foods (name, calories, created_at) VALUES (?, ?, ?)', ["yogurt", 220, new Date]
                     )
                 })
                 .then(function() {
@@ -160,19 +193,34 @@ describe('Meals API', function() {
                 })
                 .then(function() { done() });
         })
-
-        afterEach(function(done) {
-            database.raw('TRUNCATE TABLE meals RESTART IDENTITY CASCADE')
+        beforeEach(function(done) {
+            database.raw(
+                    'INSERT INTO meals_foods (food_id, meal_id, created_at) VALUES (?, ?, ?)', [1, 1, new Date]
+                )
                 .then(function() {
-                    return database.raw('TRUNCATE TABLE foods RESTART IDENTITY')
+                    return database.raw(
+                        'INSERT INTO meals_foods (food_id, meal_id, created_at) VALUES (?, ?, ?)', [2, 1, new Date]
+                    )
                 })
                 .then(function() { done() });
         })
 
+        afterEach(function(done) {
+            database.raw('TRUNCATE TABLE meals_foods RESTART IDENTITY CASCADE')
+                .then(function() {
+                    return database.raw('TRUNCATE TABLE meals RESTART IDENTITY CASCADE')
+                })
+                .then(function() {
+                    return database.raw('TRUNCATE TABLE foods RESTART IDENTITY CASCADE')
+                })
+                .then(function() { done() });
+        })
+
+
         it('should return json data of single meal', function(done) {
             this.request.post('/meals/1/foods/3', (error, response) => {
                 if (error) { done(error); }
-                let parsedFoods = JSON.parse(response.body)
+                // let parsedFoods = JSON.parse(response.body)
                 assert.equal(response.statusCode, 202);
                 done();
             });
@@ -197,23 +245,44 @@ describe('Meals API', function() {
 
         beforeEach(function(done) {
             database.raw(
-                    'INSERT INTO foods (name, calories, meal_id, created_at) VALUES (?, ?, ?, ?)', ["Apple", 120, 1, new Date]
+                    'INSERT INTO foods (name, calories, created_at) VALUES (?, ?, ?)', ["Apple", 120, new Date]
                 )
                 .then(function() {
                     return database.raw(
-                        'INSERT INTO foods (name, calories, meal_id, created_at) VALUES (?, ?, ?, ?)', ["yogurt", 220, 1, new Date]
+                        'INSERT INTO foods (name, calories, created_at) VALUES (?, ?, ?)', ["yogurt", 220, new Date]
+                    )
+                })
+                .then(function() {
+                    return database.raw(
+                        'INSERT INTO foods (name, calories, created_at) VALUES (?, ?, ?)', ["granola", 420, new Date]
+                    )
+                })
+                .then(function() { done() });
+        })
+        beforeEach(function(done) {
+            database.raw(
+                    'INSERT INTO meals_foods (food_id, meal_id, created_at) VALUES (?, ?, ?)', [1, 1, new Date]
+                )
+                .then(function() {
+                    return database.raw(
+                        'INSERT INTO meals_foods (food_id, meal_id, created_at) VALUES (?, ?, ?)', [2, 1, new Date]
                     )
                 })
                 .then(function() { done() });
         })
 
         afterEach(function(done) {
-            database.raw('TRUNCATE TABLE meals RESTART IDENTITY CASCADE')
+            database.raw('TRUNCATE TABLE meals_foods RESTART IDENTITY CASCADE')
                 .then(function() {
-                    return database.raw('TRUNCATE TABLE foods RESTART IDENTITY')
+                    return database.raw('TRUNCATE TABLE meals RESTART IDENTITY CASCADE')
+                })
+                .then(function() {
+                    return database.raw('TRUNCATE TABLE foods RESTART IDENTITY CASCADE')
                 })
                 .then(function() { done() });
         })
+
+
 
         it('should return status of delete', function(done) {
             this.request.delete('/meals/1/foods/2', (error, response) => {

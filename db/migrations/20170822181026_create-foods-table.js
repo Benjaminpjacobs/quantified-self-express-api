@@ -3,7 +3,6 @@ exports.up = function(knex, Promise) {
   id SERIAL PRIMARY KEY NOT NULL,
   name TEXT,
   calories INTEGER,
-  meal_id INTEGER REFERENCES meals(id),
   created_at TIMESTAMP
 )`;
     return knex.raw(createQuery);
