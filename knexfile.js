@@ -13,7 +13,7 @@ module.exports = {
 
     test: {
         client: 'pg',
-        connection: 'postgres://localhost/quantified_self',
+        connection: 'postgres://localhost/quantified_self_test',
         migrations: {
             directory: './db/migrations'
         },
