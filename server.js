@@ -15,6 +15,8 @@ app.get('/api/v1/foods/:id', FoodsController.getResource)
 
 app.post('/api/v1/foods', FoodsController.postResource)
 
+app.put('/api/v1/foods/:id', FoodsController.updateResource)
+
 if (!module.parent) {
     app.listen(app.get('port'), function() {
         console.log(`${app.locals.title} is running on ${app.get('port')}.`);
