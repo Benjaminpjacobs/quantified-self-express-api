@@ -2,7 +2,7 @@ const environment = process.env.NODE_ENV || 'development'
 const configuration = require('../knexfile')[environment];
 const database = require('knex')(configuration);
 
-var assert = require('assert');
+var assert = require('chai').assert
 var request = require('request');
 var app = require('../server');
 
@@ -25,6 +25,39 @@ describe('Meals API', function() {
     });
 
     describe('GET all meals', function() {
+        beforeEach(function(done) {
+            database.raw(
+                'INSERT INTO meals (name, created_at) VALUES (?, ?)', ["Breakfast", new Date]
+            ).then(function() { done() });
+        })
+
+        beforeEach(function(done) {
+            database.raw(
+                'INSERT INTO meals (name, created_at) VALUES (?, ?)', ["Lunch", new Date]
+            ).then(function() { done() });
+        })
+
+
+        beforeEach(function(done) {
+            database.raw(
+                'INSERT INTO foods (name, calories, meal_id, created_at) VALUES (?, ?, ?, ?)', ["Apple", 120, 1, new Date]
+            ).then(function() { done() });
+        })
+
+        beforeEach(function(done) {
+            database.raw(
+                'INSERT INTO foods (name, calories, meal_id, created_at) VALUES (?, ?, ?, ?)', ["Sandwich", 420, 2, new Date]
+            ).then(function() { done() });
+        })
+
+        afterEach(function(done) {
+            database.raw('TRUNCATE TABLE meals RESTART IDENTITY CASCADE')
+                .then(function() {
+                    return database.raw('TRUNCATE TABLE foods RESTART IDENTITY')
+                })
+                .then(function() { done() });
+        })
+
 
 
         it('should return a 200', function(done) {
@@ -35,16 +68,17 @@ describe('Meals API', function() {
             });
         });
 
-        // it('should return json data of meals', function(done) {
-        //     this.request.get('/meals', (error, response) => {
-        //         if (error) { done(error); }
-        //         // let parsedFoods = JSON.parse(response.body)
-        //         // assert.equal(parsedFoods.length, 1);
-        //         // assert.equal(parsedFoods[0].id, 1);
-        //         // assert.equal(parsedFoods[0].calories, 120);
-        //         // assert.equal(parsedFoods[0].name, 'Apple');
-        //         done();
-        //     });
-        // });
+        it('should return json data of meals', function(done) {
+            this.request.get('/meals', (error, response) => {
+                if (error) { done(error); }
+                let parsedFoods = JSON.parse(response.body)
+                assert.equal(parsedFoods.length, 2);
+                assert.equal(parsedFoods[0].id, 1);
+                assert.equal(parsedFoods[0].name, 'Breakfast');
+                assert.isArray(parsedFoods[0].foods);
+                assert.isObject(parsedFoods[0].foods[0]);
+                done();
+            });
+        });
     })
 });
