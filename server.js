@@ -9,7 +9,14 @@ const FoodsController = require('./lib/controllers/foods_controller.js')
 const MealsController = require('./lib/controllers/meals_controller.js')
 const WelcomeController = require('./lib/controllers/welcome_controller.js')
 
+
 app.set('port', process.env.PORT || 3000)
+
+app.use(function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+});
 
 app.get('/', WelcomeController.getIndex)
 
