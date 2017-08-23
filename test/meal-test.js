@@ -187,4 +187,49 @@ describe('Meals API', function() {
             })
         })
     })
+    describe('Delete food from meal', function() {
+        beforeEach(function(done) {
+            database.raw(
+                    'INSERT INTO meals (name, created_at) VALUES (?, ?)', ["Breakfast", new Date]
+                )
+                .then(function() { done() });
+        })
+
+        beforeEach(function(done) {
+            database.raw(
+                    'INSERT INTO foods (name, calories, meal_id, created_at) VALUES (?, ?, ?, ?)', ["Apple", 120, 1, new Date]
+                )
+                .then(function() {
+                    return database.raw(
+                        'INSERT INTO foods (name, calories, meal_id, created_at) VALUES (?, ?, ?, ?)', ["yogurt", 220, 1, new Date]
+                    )
+                })
+                .then(function() { done() });
+        })
+
+        afterEach(function(done) {
+            database.raw('TRUNCATE TABLE meals RESTART IDENTITY CASCADE')
+                .then(function() {
+                    return database.raw('TRUNCATE TABLE foods RESTART IDENTITY')
+                })
+                .then(function() { done() });
+        })
+
+        it('should return status of delete', function(done) {
+            this.request.delete('/meals/1/foods/2', (error, response) => {
+                if (error) { done(error); }
+                assert.equal(response.statusCode, 204);
+                done();
+            });
+        });
+
+        it('should return 404 if resource not found', function(done) {
+            this.request.get('meals/1/foods/4', (error, response) => {
+                if (error) { done(error); }
+                assert.equal(response.statusCode, 404)
+                done();
+
+            })
+        })
+    })
 });

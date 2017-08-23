@@ -29,6 +29,8 @@ app.get('/api/v1/meals/:id', MealsController.getResource)
 
 app.post('/api/v1/meals/:meal_id/foods/:food_id', MealsController.postFoodResource)
 
+app.delete('/api/v1/meals/:meal_id/foods/:food_id', MealsController.deleteFoodResource)
+
 
 if (!module.parent) {
     app.listen(app.get('port'), function() {
