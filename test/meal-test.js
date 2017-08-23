@@ -27,27 +27,25 @@ describe('Meals API', function() {
     describe('GET all meals', function() {
         beforeEach(function(done) {
             database.raw(
-                'INSERT INTO meals (name, created_at) VALUES (?, ?)', ["Breakfast", new Date]
-            ).then(function() { done() });
+                    'INSERT INTO meals (name, created_at) VALUES (?, ?)', ["Breakfast", new Date]
+                ).then(function() {
+                    return database.raw(
+                        'INSERT INTO meals (name, created_at) VALUES (?, ?)', ["Lunch", new Date]
+                    )
+                })
+                .then(function() { done() });
         })
 
         beforeEach(function(done) {
             database.raw(
-                'INSERT INTO meals (name, created_at) VALUES (?, ?)', ["Lunch", new Date]
-            ).then(function() { done() });
-        })
-
-
-        beforeEach(function(done) {
-            database.raw(
-                'INSERT INTO foods (name, calories, meal_id, created_at) VALUES (?, ?, ?, ?)', ["Apple", 120, 1, new Date]
-            ).then(function() { done() });
-        })
-
-        beforeEach(function(done) {
-            database.raw(
-                'INSERT INTO foods (name, calories, meal_id, created_at) VALUES (?, ?, ?, ?)', ["Sandwich", 420, 2, new Date]
-            ).then(function() { done() });
+                    'INSERT INTO foods (name, calories, meal_id, created_at) VALUES (?, ?, ?, ?)', ["Apple", 120, 1, new Date]
+                )
+                .then(function() {
+                    return database.raw(
+                        'INSERT INTO foods (name, calories, meal_id, created_at) VALUES (?, ?, ?, ?)', ["Sandwich", 420, 2, new Date]
+                    )
+                })
+                .then(function() { done() });
         })
 
         afterEach(function(done) {
@@ -74,7 +72,9 @@ describe('Meals API', function() {
                 let parsedFoods = JSON.parse(response.body)
                 assert.equal(parsedFoods.length, 2);
                 assert.equal(parsedFoods[0].id, 1);
+                assert.equal(parsedFoods[1].id, 2);
                 assert.equal(parsedFoods[0].name, 'Breakfast');
+                assert.equal(parsedFoods[1].name, 'Lunch');
                 assert.isArray(parsedFoods[0].foods);
                 assert.isObject(parsedFoods[0].foods[0]);
                 done();
