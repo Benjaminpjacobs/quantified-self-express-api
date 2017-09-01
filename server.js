@@ -2,7 +2,6 @@ var express = require('express')
 var app = express()
 var cors = require('cors')
 var bodyParser = require('body-parser')
-const path = __dirname
 
 const environment = process.env.NODE_ENV || 'development'
 const configuration = require('./knexfile')[environment];
