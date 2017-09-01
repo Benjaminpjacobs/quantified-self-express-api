@@ -2,6 +2,7 @@ var express = require('express')
 var app = express()
 var cors = require('cors')
 var bodyParser = require('body-parser')
+const path = __dirname
 
 const environment = process.env.NODE_ENV || 'development'
 const configuration = require('./knexfile')[environment];
@@ -19,7 +20,9 @@ app.use(bodyParser.urlencoded({
 }));
 app.use(cors())
 
-app.get('/', WelcomeController.getIndex)
+app.get('/', (request, response, next) => {
+    response.sendFile(__dirname + "/public/index.html")
+})
 
 app.get('/api/v1/foods', FoodsController.getAll)
 
